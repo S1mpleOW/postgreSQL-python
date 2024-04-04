@@ -48,22 +48,22 @@ export default class modalForm {
 
     if (type == "edit") {
         const title: string = "Editar contacto";
-    
+
         const formItems: HTMLInputElement[] = [
           // Name field
-          
+
           this.generateInputTextForm("name", "Nombre", "text", contact && contact[1]),
-  
+
           // Number field
           this.generateInputTextForm("phone", "Numero", "tel", contact && contact[2]),
-  
+
           // Email field
           this.generateInputTextForm("email", "Correo", "email",  contact && contact[3]),
         ];
-  
+
         this.generateForm(title, formItems);
         this.generateCloseButton();
-  
+
         if (this.modalFormDiv.innerHTML.trim() == "") {
           this.setModalVisibility(true);
           this.modalFormDiv.appendChild(this.generateCloseButton());

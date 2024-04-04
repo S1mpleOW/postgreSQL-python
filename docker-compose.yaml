@@ -1,0 +1,27 @@
+version: '3'
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+    ports:
+      - '5432:5432'
+    volumes:
+      - data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    depends_on:
+      - db
+    restart: on-failure
+    environment:
+      host: db
+      user: postgres
+      password: 123456
+    ports:
+      - '8000:8000'
+
+volumes:
+  data:
