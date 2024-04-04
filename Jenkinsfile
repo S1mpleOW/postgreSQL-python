@@ -11,6 +11,7 @@ pipeline {
     RUN_WITH_SYSTEMD = "sudo systemctl start ${PROCESS_NAME}"
     STOP_WITH_SYSTEMD = "sudo systemctl stop ${PROCESS_NAME}"
     CHECK_STATUS_SYSTEMD = "sudo systemctl status ${PROCESS_NAME}"
+    CHANGE_OWNER_SYSTEMD = "sudo chown +x /lib/systemd/system/${APP_NAME}.service"
   }
 
   stages {
@@ -18,6 +19,7 @@ pipeline {
       steps {
         echo 'Checking out code...'
         sh(script: """ whoami;pwd;ls -la """, label: "first step")
+        sh(script: """ ${CHANGE_OWNER_SYSTEMD} """, label: "change owner")
         sh(script: """ ${COPY_SYSTEMD_FILE} """, label: "copy systemd file")
         sh(script: """ ${KILL_ALL_PORT} """, label: "kill all process on port ${APP_PORT}")
         sh(script: """ ${RELOAD_SYSTEMD} """, label: "reload systemd")

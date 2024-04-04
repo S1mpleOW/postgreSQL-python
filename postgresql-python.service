@@ -5,9 +5,9 @@ After=postgresql.service
 [Service]
 User=root
 Group=root
-WorkingDirectory=/path/to/your/app
+WorkingDirectory=/var/lib/jenkins/workspace/postgresql-python/
 Restart=on-failure
-ExecStart=/bin/bash /var/lib/jenkins/workspace/postgresql-python/systemd_script.sh
+ExecStart=/bin/bash systemd_script.sh
 
 [Install]
 WantedBy=multi-user.target
