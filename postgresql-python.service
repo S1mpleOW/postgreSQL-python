@@ -3,12 +3,10 @@ Description=Postgresql-Python lovely project
 After=postgresql.service
 
 [Service]
-Type=simple
 User=root
 Group=root
 WorkingDirectory=/path/to/your/app
 Restart=on-failure
-RestartSec=10
 ExecStart=/bin/bash /var/lib/jenkins/workspace/postgresql-python/systemd_script.sh
 
 [Install]
