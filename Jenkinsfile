@@ -1,11 +1,25 @@
 pipeline {
   agent any
 
+  environment {
+    APP_NAME = 'postgresql-python'
+    APP_PORT = 8000
+    PROCESS_NAME = "${APP_NAME}.service"
+    COPY_SYSTEMD_FILE = "sudo cp ${APP_NAME}.service /lib/systemd/system/"
+    RELOAD_SYSTEMD = "sudo systemctl daemon-reload"
+    KILL_ALL_PORT = "sudo fuser -k ${APP_PORT}/tcp"
+    RUN_WITH_SYSTEMD = "sudo systemctl start ${PROCESS_NAME}"
+  }
+
   stages {
-    stage('Build image') {
+    stage('Systemd') {
       steps {
         echo 'Checking out code...'
-      	sh(script: """ whoami;pwd;ls -la """, label: "first step")
+        sh(script: """ whoami;pwd;ls -la """, label: "first step")
+        sh(script: """ ${COPY_SYSTEMD_FILE} """, label: "copy systemd file")
+        sh(script: """ ${KILL_ALL_PORT} """, label: "kill all process on port ${APP_PORT}")
+        sh(script: """ ${RELOAD_SYSTEMD} """, label: "reload systemd")
+        sh(script: """ ${RUN_WITH_SYSTEMD} """, label: "run application with systemd")
       }
     }
   }

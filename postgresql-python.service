@@ -1,0 +1,12 @@
+[Unit]
+Description=Postgresql-Python lovely project
+After=postgresql.service
+
+[Service]
+User=root
+Group=root
+Restart=on-failure
+ExecStart=/bin/bash /home/s1mpleow/projects/postgreSQL-python/systemd_script.sh
+
+[Install]
+WantedBy=multi-user.target
