@@ -7,7 +7,7 @@ pipeline {
     PROCESS_NAME = "${APP_NAME}.service"
     COPY_SYSTEMD_FILE = "sudo cp ${APP_NAME}.service /lib/systemd/system/"
     RELOAD_SYSTEMD = "sudo systemctl daemon-reload"
-    KILL_ALL_PORT = "sudo fuser -k ${APP_PORT}/tcp"
+    KILL_ALL_PORT = "sudo fuser -k ${APP_PORT}/tcp || true"
     RUN_WITH_SYSTEMD = "sudo systemctl start ${PROCESS_NAME}"
   }
 
