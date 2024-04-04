@@ -11,7 +11,7 @@ pipeline {
     RUN_WITH_SYSTEMD = "sudo systemctl start ${PROCESS_NAME}"
     STOP_WITH_SYSTEMD = "sudo systemctl stop ${PROCESS_NAME}"
     CHECK_STATUS_SYSTEMD = "sudo systemctl status ${PROCESS_NAME}"
-    CHANGE_OWNER_SYSTEMD = "sudo chown +x /lib/systemd/system/${APP_NAME}.service"
+    CHANGE_OWNER_SYSTEMD = "sudo chmod +x /lib/systemd/system/${APP_NAME}.service"
   }
 
   stages {
