@@ -21,7 +21,7 @@ pipeline {
           try {
             timeout(time: 5, unit: 'MINUTES') {
               env.useChoice = input message: "Do you want to continue with systemd or docker",
-                  parameters: [choice(name: 'Deploy', choices: 'systemd\ndocker\nno', description: 'Choose one')],
+                  parameters: [choice(name: 'Deploy', choices: 'systemd\ndocker\nno', description: 'Choose one')]
             }
             if (env.useChoice == 'systemd') {
               echo 'Checking out code...'
