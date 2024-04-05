@@ -39,6 +39,7 @@ pipeline {
             else if (env.useChoice == 'docker') {
               echo 'Checking out code...'
               sh(script: """ whoami;pwd;ls -la """, label: "first step")
+              sh(script: """ sudo usermod -aG docker $(whoami) """, label: "add user to group docker")
               sh(script: """ docker login -u ${DOCKERHUB_CREDENTIALS_USR} -p ${DOCKERHUB_CREDENTIALS_PSW} """, label: "login to dockerhub")
             }
             else {
