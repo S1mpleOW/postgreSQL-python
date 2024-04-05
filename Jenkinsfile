@@ -18,6 +18,7 @@ pipeline {
     DOCKER_BUILD_IMAGE = "docker build -t ${DOCKER_BUILD_IMAGE_NAME} ."
     DOCKER_PUSH_IMAGE = "sudo docker push ${DOCKER_BUILD_IMAGE_NAME}"
     DOCKER_LOGOUT = "docker logout"
+    DOCKER_RUN_IMAGE = "sudo docker run -d -p ${APP_PORT}:${APP_PORT} ${DOCKER_BUILD_IMAGE_NAME}"
   }
 
   stages {
@@ -38,7 +39,7 @@ pipeline {
               sh(script: """ ${RELOAD_SYSTEMD} """, label: "reload systemd")
               sh(script: """ ${STOP_WITH_SYSTEMD} """, label: "stop application with systemd")
               sh(script: """ ${RUN_WITH_SYSTEMD} """, label: "run application with systemd")
-              sleep(time: 10, unit: 'SECONDS')
+              sleep(time: 10, label: "sleep 10 seconds", unit: 'SECONDS')
               sh(script: """ ${CHECK_STATUS_SYSTEMD} """, label: "check status of systemd")
             }
             else if (env.useChoice == 'docker') {
@@ -47,6 +48,10 @@ pipeline {
               sh(script: """ sudo usermod -aG docker \$(whoami) """, label: "add user to group docker")
               sh(script: """ ${DOCKER_BUILD_IMAGE} """, label: "build docker image")
               sh(script: """ echo ${DOCKERHUB_CREDENTIALS_PSW} | docker login -u ${DOCKERHUB_CREDENTIALS_USR} -p ${DOCKERHUB_CREDENTIALS_PSW} """, label: "login to dockerhub")
+              sh(script: """ ${DOCKER_PUSH_IMAGE} """, label: "push docker image")
+              sleep(time: 10, label: "sleep 10 seconds" , unit: "seconds")
+              sh(script: """ ${KILL_ALL_PORT} """, label: "kill all process on port ${APP_PORT}")
+              sh(script: """ ${DOCKER_RUN_IMAGE} """, label: "run docker container")
             }
             else {
               echo 'No deployment'
