@@ -4,7 +4,10 @@ pipeline {
   environment {
     APP_NAME = 'postgresql-python'
     APP_PORT = 8000
+    DOCKERHUB_CREDENTIALS= credentials('dockerhubcredentials')
+    DOCKER_BUILD_IMAGE_NAME = "${DOCKERHUB_CREDENTIALS_USR}/${APP_NAME}:${BUILD_NUMBER}"
     PROCESS_NAME = "${APP_NAME}.service"
+    CHECK_CURRENT_STATE = "whoami;pwd;ls -la"
     COPY_SYSTEMD_FILE = "sudo cp ${APP_NAME}.service /lib/systemd/system/"
     RELOAD_SYSTEMD = "sudo systemctl daemon-reload"
     KILL_ALL_PORT = "sudo fuser -k ${APP_PORT}/tcp || true"
@@ -12,7 +15,9 @@ pipeline {
     STOP_WITH_SYSTEMD = "sudo systemctl stop ${PROCESS_NAME}"
     CHECK_STATUS_SYSTEMD = "sudo systemctl status ${PROCESS_NAME}"
     CHANGE_OWNER_SYSTEMD = "sudo chmod +x /lib/systemd/system/${APP_NAME}.service"
-    DOCKERHUB_CREDENTIALS= credentials('dockerhubcredentials')
+    DOCKER_BUILD_IMAGE = "docker build -t ${DOCKER_BUILD_IMAGE_NAME} ."
+    DOCKER_PUSH_IMAGE = "sudo docker push ${DOCKER_BUILD_IMAGE_NAME}"
+    DOCKER_LOGOUT = "docker logout"
   }
 
   stages {
@@ -26,7 +31,7 @@ pipeline {
             }
             if (env.useChoice == 'systemd') {
               echo 'Checking out code...'
-              sh(script: """ whoami;pwd;ls -la """, label: "first step")
+              sh(script: """ ${CHECK_CURRENT_STATE} """, label: "check current state")
               sh(script: """ ${CHANGE_OWNER_SYSTEMD} """, label: "change owner")
               sh(script: """ ${COPY_SYSTEMD_FILE} """, label: "copy systemd file")
               sh(script: """ ${KILL_ALL_PORT} """, label: "kill all process on port ${APP_PORT}")
@@ -38,8 +43,9 @@ pipeline {
             }
             else if (env.useChoice == 'docker') {
               echo 'Checking out code...'
-              sh(script: """ whoami;pwd;ls -la """, label: "first step")
+              sh(script: """ ${CHECK_CURRENT_STATE} """, label: "check current state")
               sh(script: """ sudo usermod -aG docker \$(whoami) """, label: "add user to group docker")
+              sh(script: """ ${DOCKER_BUILD_IMAGE} """, label: "build docker image")
               sh(script: """ echo ${DOCKERHUB_CREDENTIALS_PSW} | docker login -u ${DOCKERHUB_CREDENTIALS_USR} -p ${DOCKERHUB_CREDENTIALS_PSW} """, label: "login to dockerhub")
             }
             else {
@@ -50,6 +56,11 @@ pipeline {
           }
         }
       }
+    }
+  }
+  post{
+    always {
+      sh(script: """ ${DOCKER_LOGOUT} """, label: "logout from dockerhub")
     }
   }
 }
