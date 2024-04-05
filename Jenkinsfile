@@ -12,10 +12,11 @@ pipeline {
     STOP_WITH_SYSTEMD = "sudo systemctl stop ${PROCESS_NAME}"
     CHECK_STATUS_SYSTEMD = "sudo systemctl status ${PROCESS_NAME}"
     CHANGE_OWNER_SYSTEMD = "sudo chmod +x /lib/systemd/system/${APP_NAME}.service"
+    DOCKERHUB_CREDENTIALS= credentials('dockerhubcredentials')
   }
 
   stages {
-    stage('Systemd') {
+    stage('Deploy') {
       steps {
         script {
           try {
@@ -38,10 +39,7 @@ pipeline {
             else if (env.useChoice == 'docker') {
               echo 'Checking out code...'
               sh(script: """ whoami;pwd;ls -la """, label: "first step")
-              sh(script: """ docker-compose down """, label: "docker-compose down")
-              sh(script: """ docker-compose up -d """, label: "docker-compose up")
-              sleep(time: 10, unit: 'SECONDS')
-              sh(script: """ docker ps """, label: "docker ps")
+              sh(script: """ docker login -u ${DOCKERHUB_CREDENTIALS_USR} -p ${DOCKERHUB_CREDENTIALS_PSW} """, label: "login to dockerhub")
             }
             else {
               echo 'No deployment'
