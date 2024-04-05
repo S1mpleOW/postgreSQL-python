@@ -39,7 +39,7 @@ pipeline {
               sh(script: """ ${RELOAD_SYSTEMD} """, label: "reload systemd")
               sh(script: """ ${STOP_WITH_SYSTEMD} """, label: "stop application with systemd")
               sh(script: """ ${RUN_WITH_SYSTEMD} """, label: "run application with systemd")
-              sleep(time: 10, label: "sleep 10 seconds", unit: 'SECONDS')
+              sleep(time: 10, unit: 'SECONDS')
               sh(script: """ ${CHECK_STATUS_SYSTEMD} """, label: "check status of systemd")
             }
             else if (env.useChoice == 'docker') {
@@ -49,7 +49,7 @@ pipeline {
               sh(script: """ ${DOCKER_BUILD_IMAGE} """, label: "build docker image")
               sh(script: """ echo ${DOCKERHUB_CREDENTIALS_PSW} | docker login -u ${DOCKERHUB_CREDENTIALS_USR} -p ${DOCKERHUB_CREDENTIALS_PSW} """, label: "login to dockerhub")
               sh(script: """ ${DOCKER_PUSH_IMAGE} """, label: "push docker image")
-              sleep(time: 10, label: "sleep 10 seconds" , unit: "seconds")
+              sleep(time: 10, unit: "SECONDS")
               sh(script: """ ${KILL_ALL_PORT} """, label: "kill all process on port ${APP_PORT}")
               sh(script: """ ${DOCKER_RUN_IMAGE} """, label: "run docker container")
             }
