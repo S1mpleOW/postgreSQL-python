@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 APP_NAME="postgresql-python"
 APP_PORT="8080"
 PROCESS_NAME="${APP_NAME}.service"
