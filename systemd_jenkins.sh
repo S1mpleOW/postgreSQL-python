@@ -1,6 +1,6 @@
 #!/bin/sh
 APP_NAME="postgresql-python"
-APP_PORT="8080"
+APP_PORT=8000
 PROCESS_NAME="${APP_NAME}.service"
 
 sudo cp "${APP_NAME}.service" /lib/systemd/system/
@@ -13,6 +13,6 @@ sudo fuser -k "${APP_PORT}/tcp" || true
 
 sudo systemctl start "${PROCESS_NAME}"
 
-sleep 10
+echo "Sleep 10 seconds" | sleep 10
 
 sudo systemctl status "${PROCESS_NAME}"
