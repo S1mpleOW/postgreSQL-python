@@ -56,11 +56,7 @@ pipeline {
                 fi
               """, label: "copy env file if not exist")
               sh(script: """ ${DOCKER_RUN_IMAGE} """, label: "run docker container")
-              post{
-                always {
-                  sh(script: """ ${DOCKER_LOGOUT} """, label: "logout from dockerhub")
-                }
-              }
+              sh(script: """ ${DOCKER_LOGOUT} """, label: "logout from dockerhub")
             }
             else {
               echo 'No deployment'
