@@ -52,6 +52,11 @@ pipeline {
               sleep(time: 10, unit: "SECONDS")
               sh(script: """ ${KILL_ALL_PORT} """, label: "kill all process on port ${APP_PORT}")
               sh(script: """ ${DOCKER_RUN_IMAGE} """, label: "run docker container")
+              post{
+                always {
+                  sh(script: """ ${DOCKER_LOGOUT} """, label: "logout from dockerhub")
+                }
+              }
             }
             else {
               echo 'No deployment'
@@ -63,9 +68,5 @@ pipeline {
       }
     }
   }
-  post{
-    always {
-      sh(script: """ ${DOCKER_LOGOUT} """, label: "logout from dockerhub")
-    }
-  }
+
 }
