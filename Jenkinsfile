@@ -51,6 +51,10 @@ pipeline {
               sh(script: """ ${DOCKER_PUSH_IMAGE} """, label: "push docker image")
               sleep(time: 10, unit: "SECONDS")
               sh(script: """ ${KILL_ALL_PORT} """, label: "kill all process on port ${APP_PORT}")
+              sh(script: """ if ! [-f .env]; then
+                  cp .env.example .env
+                fi
+              """, label: "copy env file if not exist")
               sh(script: """ ${DOCKER_RUN_IMAGE} """, label: "run docker container")
               post{
                 always {
